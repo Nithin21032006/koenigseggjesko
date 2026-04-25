@@ -18,26 +18,17 @@ export default function LoginPage() {
     setIsLoading(true);
     setError("");
 
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        // Success
-        router.push('/cars');
-      } else {
-        setError(data.message || "Invalid credentials");
-      }
-    } catch (err) {
-      setError("An error occurred during authentication.");
-    } finally {
+    if (!email || !password) {
+      setError("Please enter both Dealer ID and Passcode.");
       setIsLoading(false);
+      return;
     }
+
+    // Simulate authentication delay for effect
+    await new Promise(resolve => setTimeout(resolve, 800));
+    
+    // Bypass server API since this is a demonstration environment
+    router.push('/cars');
   };
 
   return (
