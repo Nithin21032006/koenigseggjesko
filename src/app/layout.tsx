@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Orbitron, Rajdhani } from "next/font/google";
 import CustomCursor from "@/components/CustomCursor";
+import { Providers } from "@/context/Providers";
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -29,8 +30,10 @@ export default function RootLayout({
       <body
         className={`${orbitron.variable} ${rajdhani.variable} antialiased bg-jesko-black text-white selection:bg-jesko-gold selection:text-jesko-black min-h-screen relative`}
       >
-        <CustomCursor />
-        {children}
+        <Providers>
+          <CustomCursor />
+          {children}
+        </Providers>
       </body>
     </html>
   );

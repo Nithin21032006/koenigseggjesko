@@ -1,0 +1,39 @@
+[
+  {
+    "id": "ORD-1777111758849-68",
+    "timestamp": "2026-04-25T10:09:18.849Z",
+    "status": "pending",
+    "user": {
+      "firstName": "zd",
+      "lastName": "aa",
+      "email": "as@gmail.com",
+      "phone": "as",
+      "region": "us",
+      "comments": "asd"
+    },
+    "configuration": {
+      "carId": "jesko",
+      "carName": "Koenigsegg Jesko",
+      "basePrice": 3000000,
+      "wheels": {
+        "id": "wheel-carbon",
+        "name": "Aircore Carbon Wheels",
+        "price": 45000
+      },
+      "interior": {
+        "id": "int-tan",
+        "name": "Desiato Sand Leather",
+        "price": 18000,
+        "colorHex": "#d2b48c"
+      },
+      "packages": [
+        {
+          "id": "pkg-luggage",
+          "name": "Bespoke Luggage Set",
+          "price": 14000
+        }
+      ],
+      "totalPrice": 3077000
+    }
+  }
+]
