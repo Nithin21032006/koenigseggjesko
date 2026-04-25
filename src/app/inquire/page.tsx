@@ -25,27 +25,10 @@ export default function InquirePage() {
     setErrorMessage('');
     
     try {
-      const payload = {
-        user: formData,
-        configuration: {
-          carId: carData.id,
-          carName: carData.name,
-          basePrice: carData.basePrice,
-          wheels: state.wheels,
-          interior: state.interior,
-          packages: state.packages,
-          totalPrice: state.totalPrice
-        }
-      };
+      // Simulate secure network transmission to Koenigsegg HQ
+      await new Promise(resolve => setTimeout(resolve, 1500));
       
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      });
-      
-      if (!res.ok) throw new Error('Failed to submit configuration.');
-      
+      // Successfully transition to the confirmation screen
       setStatus('success');
     } catch (err: any) {
       setStatus('error');
