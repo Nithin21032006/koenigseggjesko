@@ -1,35 +1,27 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { useAudio } from "@/context/AudioContext";
 
 export default function EngineIgnition() {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const { playEngineRev } = useAudio();
   const [isPlaying, setIsPlaying] = useState(false);
 
   const startEngine = () => {
-    if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        audioRef.current.currentTime = 0;
-        setIsPlaying(false);
-      } else {
-        audioRef.current.play().catch(e => console.error("Audio playback failed:", e));
-        setIsPlaying(true);
-        audioRef.current.onended = () => {
-          setIsPlaying(false);
-        };
-      }
-    }
+    if (isPlaying) return;
+    setIsPlaying(true);
+    playEngineRev();
+    
+    // Auto-stop the visualizer after the 3.5s synthesized rev finishes
+    setTimeout(() => {
+      setIsPlaying(false);
+    }, 3500);
   };
 
   return (
     <section className="py-24 bg-jesko-black flex flex-col items-center justify-center relative overflow-hidden border-t border-carbon-gray">
-      <audio 
-        ref={audioRef} 
-        src="https://actions.google.com/sounds/v1/transportation/car_revving.ogg" 
-        preload="auto"
-      />
+
 
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-4xl opacity-20 pointer-events-none flex items-center justify-center gap-2">
         {/* Animated equalizer waves when playing */}

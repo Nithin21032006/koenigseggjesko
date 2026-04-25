@@ -6,6 +6,7 @@ interface AudioContextType {
   playHover: () => void;
   playSelect: () => void;
   playScanner: () => void;
+  playEngineRev: () => void;
 }
 
 const AudioContext = createContext<AudioContextType | undefined>(undefined);
@@ -28,7 +29,7 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     };
   }, [audioCtx]);
 
-  const playSound = useCallback((type: 'hover' | 'select' | 'scanner') => {
+  const playSound = useCallback((type: 'hover' | 'select' | 'scanner' | 'engine') => {
     if (!audioCtx) return;
 
     if (audioCtx.state === 'suspended') {
@@ -81,11 +82,50 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
       filter.connect(gainNode);
 
       gainNode.gain.setValueAtTime(0, now);
-      gainNode.gain.linearRampToValueAtTime(0.1, now + 0.3);
       gainNode.gain.linearRampToValueAtTime(0.001, now + 0.6);
 
       osc.start(now);
       osc.stop(now + 0.65);
+    } else if (type === 'engine') {
+      // Synthesize a roaring V8 engine rev
+      const osc1 = audioCtx.createOscillator();
+      const osc2 = audioCtx.createOscillator();
+      
+      osc1.type = 'sawtooth';
+      osc2.type = 'square';
+      
+      // Pitch ramp: Idle -> Rev limit -> Back to idle
+      osc1.frequency.setValueAtTime(30, now);
+      osc1.frequency.linearRampToValueAtTime(160, now + 1.2);
+      osc1.frequency.exponentialRampToValueAtTime(30, now + 3.0);
+      
+      // Slightly detuned second oscillator for a thicker sound
+      osc2.frequency.setValueAtTime(31.5, now);
+      osc2.frequency.linearRampToValueAtTime(165, now + 1.2);
+      osc2.frequency.exponentialRampToValueAtTime(31.5, now + 3.0);
+
+      // Lowpass filter to muffle the high digital frequencies and make it sound like a rumbling exhaust
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(150, now);
+      filter.frequency.linearRampToValueAtTime(1200, now + 1.2);
+      filter.frequency.exponentialRampToValueAtTime(150, now + 3.0);
+      filter.Q.value = 3;
+
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gainNode);
+
+      // Volume envelope
+      gainNode.gain.setValueAtTime(0, now);
+      gainNode.gain.linearRampToValueAtTime(0.6, now + 0.2);
+      gainNode.gain.linearRampToValueAtTime(0.4, now + 1.2);
+      gainNode.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
+      osc1.start(now);
+      osc2.start(now);
+      osc1.stop(now + 3.5);
+      osc2.stop(now + 3.5);
     }
   }, [audioCtx]);
 
@@ -93,7 +133,8 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
     <AudioContext.Provider value={{
       playHover: () => playSound('hover'),
       playSelect: () => playSound('select'),
-      playScanner: () => playSound('scanner')
+      playScanner: () => playSound('scanner'),
+      playEngineRev: () => playSound('engine')
     }}>
       {children}
     </AudioContext.Provider>
